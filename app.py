@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import os
 from github import Github
-import base64
 import io
 
 # === PAGE CONFIGURATION ===
@@ -25,110 +24,35 @@ st.markdown(f"""
 # === STYLE MODERNE ===
 st.markdown("""
 <style>
-body, .stApp {
-    background-color: #e0e0e0;
-    color: black;
-    font-family: 'Segoe UI', sans-serif;
-}
+body, .stApp { background-color: #e0e0e0; color: black; font-family: 'Segoe UI', sans-serif; }
 
-/* Bandeau supérieur */
-.header-banner {
-    width: 100%;
-    margin: 0;
-    background-color: #003366;
-    color: white;
-    padding: 15px 20px;
-    border-bottom: 4px solid #0055a5;
-    border-radius: 0 0 15px 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
+.header-banner { width: 100%; margin: 0; background-color: #003366; color: white; padding: 15px 20px;
+border-bottom: 4px solid #0055a5; border-radius: 0 0 15px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+.header-content { display: flex; justify-content: space-between; align-items: center; }
 
-.header-content h1 {
-    color: white;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.8em;
-    flex-grow: 1;
-}
+.header-content h1 { color: white; text-align: center; font-weight: 700; font-size: 1.8em; flex-grow: 1; }
 
-.header-content img {
-    width: 80px;
-    margin: 0 15px;
-}
+.header-content img { width: 80px; margin: 0 15px; }
 
-.top-text {
-    text-align: center;
-    font-size: 1em;
-    color: #cce0ff;
-    margin-bottom: 5px;
-    letter-spacing: 0.5px;
-}
+.top-text { text-align: center; font-size: 1em; color: #cce0ff; margin-bottom: 5px; letter-spacing: 0.5px; }
 
-/* Cartes et info-cards */
-.card {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-}
+.card { background-color: #ffffff; padding: 20px; border-radius: 15px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
 
-.info-card {
-    background-color: #f5f5f5;
-    border-left: 6px solid #0055a5;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-}
+.info-card { background-color: #f5f5f5; border-left: 6px solid #0055a5; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
 
-h4 {
-    color: #003366;
-    margin-bottom: 10px;
-    border-left: 5px solid #0055a5;
-    padding-left: 8px;
-}
+h4 { color: #003366; margin-bottom: 10px; border-left: 5px solid #0055a5; padding-left: 8px; }
 
-.label-line {
-    font-weight: bold;
-    color: #003366;
-    margin-bottom: 5px;
-}
+.label-line { font-weight: bold; color: #003366; margin-bottom: 5px; }
 
-.inline-scale {
-    font-weight: normal;
-    font-size: 0.85em;
-    color: #555;
-    margin-left: 5px;
-    font-style: italic;
-}
+.inline-scale { font-weight: normal; font-size: 0.85em; color: #555; margin-left: 5px; font-style: italic; }
 
-.stButton>button {
-    background-color: #003366;
-    color: white;
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 10px 20px;
-    width: 100%;
-    transition: all 0.2s ease-in-out;
-}
+.stButton>button { background-color: #003366; color: white; font-weight: 600; border-radius: 8px;
+padding: 10px 20px; width: 100%; transition: all 0.2s ease-in-out; }
 
-.stButton>button:hover {
-    background-color: #0055a5;
-    transform: scale(1.02);
-}
+.stButton>button:hover { background-color: #0055a5; transform: scale(1.02); }
 
-.success-msg {
-    text-align: center;
-    font-weight: bold;
-    color: #003366;
-    margin-top: 15px;
-}
+.success-msg { text-align: center; font-weight: bold; color: #003366; margin-top: 15px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -140,13 +64,11 @@ st.markdown("""
 Ce questionnaire permet de suivre ton état de forme et ta récupération au fil des jours.<br>
 L’objectif est d’adapter les entraînements pour éviter la fatigue excessive et améliorer tes performances.
 </p>
-
 <ul>
 <li><b>État mental :</b> ton ressenti psychologique, motivation, concentration, stress.</li>
 <li><b>État physique :</b> ton ressenti corporel, douleurs, énergie, fatigue générale.</li>
 <li><b>Échelle de Borg :</b> à quel point l’entraînement t’a semblé difficile (effort perçu).</li>
 </ul>
-
 <p style='font-size:0.9em; color:#444;'>
 👉 <b>0 = parfait</b> (très bien mentalement/physiquement, facile à l’entraînement)<br>
 👉 <b>10 = difficile</b> (fatiguée, stressée ou effort très intense)
@@ -185,12 +107,30 @@ st.markdown("<h4>📝 Commentaire libre</h4>", unsafe_allow_html=True)
 commentaire = st.text_area("Comment t’es-tu sentie aujourd’hui ?", "")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# === ENREGISTREMENT SUR GITHUB ===
+# === FONCTION POUR PUSH SUR GITHUB ===
+def push_to_github(df_new):
+    # Le token GitHub est récupéré depuis les secrets Streamlit
+    token = os.getenv("GITHUB_TOKEN")  
+    repo_name = "Marchais795/mon_projet_streamlit"
+    g = Github(token)
+    repo = g.get_repo(repo_name)
+    
+    path = "suivi_joueuse.csv"
+    
+    try:
+        contents = repo.get_contents(path)
+        old_csv = io.StringIO(contents.decoded_content.decode())
+        df_old = pd.read_csv(old_csv)
+        df_combined = pd.concat([df_old, df_new], ignore_index=True)
+        repo.update_file(contents.path, "Mise à jour données", df_combined.to_csv(index=False), contents.sha)
+    except:
+        repo.create_file(path, "Ajout des données", df_new.to_csv(index=False))
+
+# === ENREGISTREMENT DES DONNÉES ===
 if st.button("💾 Enregistrer mes données"):
     if not joueuse:
         st.error("⚠️ Merci d’entrer ton nom avant d’enregistrer.")
     else:
-        # Crée le DataFrame de la saisie
         df_new = pd.DataFrame({
             "Joueuse": [joueuse],
             "Etat_Mental (0=Excellent,10=Fatiguée)": [etat_mental],
@@ -198,29 +138,8 @@ if st.button("💾 Enregistrer mes données"):
             "Evaluation_Entrainement (Borg)": [entrainement],
             "Commentaire": [commentaire]
         })
-
-        # Transforme le DataFrame en CSV en mémoire
-        csv_data = df_new.to_csv(index=False)
-
-        # Connexion GitHub via token
-        token = os.getenv("GITHUB_TOKEN")
-        repo_name = "Marchais795/mon_projet_streamlit"
-        g = Github(token)
-        repo = g.get_repo(repo_name)
-
-        try:
-            # Essaie de récupérer le fichier existant
-            contents = repo.get_contents("suivi_joueuse.csv")
-            # Concatène l'ancien CSV avec le nouveau
-            old_csv = io.StringIO(contents.decoded_content.decode())
-            df_old = pd.read_csv(old_csv)
-            df_combined = pd.concat([df_old, df_new], ignore_index=True)
-            # Met à jour le fichier existant
-            repo.update_file(contents.path, "Mise à jour données", df_combined.to_csv(index=False), contents.sha)
-        except:
-            # Sinon crée le fichier s'il n'existe pas
-            repo.create_file("suivi_joueuse.csv", "Ajout données", csv_data)
-
+        push_to_github(df_new)
         st.success("✅ Données enregistrées avec succès sur GitHub !")
         st.markdown("<div class='success-msg'>Merci pour ta participation 💙</div>", unsafe_allow_html=True)
+
 
