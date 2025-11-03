@@ -1,27 +1,33 @@
 import streamlit as st
 import pandas as pd
 import os
-from base64 import b64encode
 
 # === PAGE CONFIGURATION ===
 st.set_page_config(page_title="Suivi Joueuse RMBB", layout="centered")
 
-# === LOGO RMBB ===
-logo_path = r"C:\Users\march\OneDrive - univ-rouen.fr\Bureau\mon_projet_streamlit\image\Rouen Bihorel basket.png"
-with open(logo_path, "rb") as f:
-    logo_base64 = b64encode(f.read()).decode("utf-8")
+# === LOGO RMBB VIA LINK RAW GITHUB ===
+logo_url = "https://raw.githubusercontent.com/Marchais795/mon_projet_streamlit/main/image/Rouen%20Bihorel%20basket.png"
+
+st.markdown(f"""
+<div class="header-banner">
+    <div class="top-text">🏀 Saison 2025-2026 — Championnat LF2</div>
+    <div class="header-content">
+        <img src="{logo_url}" width="80">
+        <h1>Suivi de la Charge - RMBB</h1>
+        <img src="{logo_url}" width="80">
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # === STYLE MODERNE ===
 st.markdown("""
 <style>
-/* === FOND DE PAGE GRIS === */
 body, .stApp {
     background-color: #e0e0e0;
     color: black;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* === BANDEAU BLEU SUPÉRIEUR === */
 .header-banner {
     width: 100%;
     margin: 0;
@@ -60,7 +66,6 @@ body, .stApp {
     letter-spacing: 0.5px;
 }
 
-/* === CARTES ET INFO-CARDS === */
 .card {
     background-color: #ffffff;
     padding: 20px;
@@ -98,7 +103,6 @@ h4 {
     font-style: italic;
 }
 
-/* === BOUTONS === */
 .stButton>button {
     background-color: #003366;
     color: white;
@@ -114,7 +118,6 @@ h4 {
     transform: scale(1.02);
 }
 
-/* === MESSAGE DE SUCCÈS === */
 .success-msg {
     text-align: center;
     font-weight: bold;
@@ -122,18 +125,6 @@ h4 {
     margin-top: 15px;
 }
 </style>
-""", unsafe_allow_html=True)
-
-# === EN-TÊTE BLEU AVEC LOGOS + TEXTE ===
-st.markdown(f"""
-<div class="header-banner">
-    <div class="top-text">🏀 Saison 2025-2026 — Championnat LF2</div>
-    <div class="header-content">
-        <img src="data:image/png;base64,{logo_base64}">
-        <h1>Suivi de la Charge - RMBB</h1>
-        <img src="data:image/png;base64,{logo_base64}">
-    </div>
-</div>
 """, unsafe_allow_html=True)
 
 # === FICHE EXPLICATIVE ===
