@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from github import Github
 import base64
+import io
 
 # === PAGE CONFIGURATION ===
 st.set_page_config(page_title="Suivi Joueuse RMBB", layout="centered")
@@ -30,6 +31,7 @@ body, .stApp {
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* Bandeau supérieur */
 .header-banner {
     width: 100%;
     margin: 0;
@@ -68,6 +70,7 @@ body, .stApp {
     letter-spacing: 0.5px;
 }
 
+/* Cartes et info-cards */
 .card {
     background-color: #ffffff;
     padding: 20px;
@@ -199,7 +202,7 @@ if st.button("💾 Enregistrer mes données"):
         # Transforme le DataFrame en CSV en mémoire
         csv_data = df_new.to_csv(index=False)
 
-        # Connexion GitHub via token sécurisé
+        # Connexion GitHub via token
         token = os.getenv("GITHUB_TOKEN")
         repo_name = "Marchais795/mon_projet_streamlit"
         g = Github(token)
@@ -209,11 +212,10 @@ if st.button("💾 Enregistrer mes données"):
             # Essaie de récupérer le fichier existant
             contents = repo.get_contents("suivi_joueuse.csv")
             # Concatène l'ancien CSV avec le nouveau
-            import io
-            import pandas as pd
             old_csv = io.StringIO(contents.decoded_content.decode())
             df_old = pd.read_csv(old_csv)
             df_combined = pd.concat([df_old, df_new], ignore_index=True)
+            # Met à jour le fichier existant
             repo.update_file(contents.path, "Mise à jour données", df_combined.to_csv(index=False), contents.sha)
         except:
             # Sinon crée le fichier s'il n'existe pas
@@ -221,3 +223,4 @@ if st.button("💾 Enregistrer mes données"):
 
         st.success("✅ Données enregistrées avec succès sur GitHub !")
         st.markdown("<div class='success-msg'>Merci pour ta participation 💙</div>", unsafe_allow_html=True)
+
