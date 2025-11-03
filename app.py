@@ -7,7 +7,7 @@ from base64 import b64encode
 st.set_page_config(page_title="Suivi Joueuse RMBB", layout="centered")
 
 # === LOGO RMBB ===
-logo_path = r"C:\Users\march\OneDrive - univ-rouen.fr\Bureau\Rouen Basket\logo équipe\Rouen Bihorel basket.png"
+logo_path = r"C:\Users\march\OneDrive - univ-rouen.fr\Bureau\mon_projet_streamlit\image\Rouen Bihorel basket.png"
 with open(logo_path, "rb") as f:
     logo_base64 = b64encode(f.read()).decode("utf-8")
 
